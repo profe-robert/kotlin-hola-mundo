@@ -103,10 +103,10 @@ fun FullScreen() {
         if (isLandscape) { // horizontal
             Row(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
-                // horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Logo(Modifier.height(50.dp).fillMaxWidth())
+                Logo(Modifier.height(150.dp))
                 BotonDialog()
             }
         } else { // vertical
@@ -123,7 +123,7 @@ fun FullScreen() {
 }
 
 // descomenta las propiedades de alto y ancho para ver el preview en landscape (horizontal)
-@Preview(showBackground = true, widthDp = 700, heightDp = 400)
+@Preview(showBackground = true/*, widthDp = 700, heightDp = 400*/)
 @Composable
 fun RockScreenPreview() {
     FullScreen()
