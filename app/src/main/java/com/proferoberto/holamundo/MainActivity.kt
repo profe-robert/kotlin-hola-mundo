@@ -1,5 +1,6 @@
 package com.proferoberto.holamundo
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,55 +36,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Saludos $name!",
-        modifier = modifier
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FullScreen() {
+fun BotonDialog(modifier: Modifier = Modifier) {
     val showDialog = remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Home, // Ícono de Material Design
-                            contentDescription = "Icono estrella",
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text("Mi App Kotlin")
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween, // Esto deja espacio entre la imagen y el botón
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image),
-                contentDescription = "Imagen de ejemplo",
-                modifier = Modifier
-                    .fillMaxWidth(),
-                    // .height(180.dp),
-                contentScale = ContentScale.Crop
-            )
-
-            Button(onClick = { showDialog.value = true }) {
-                Text("Mostrar mensaje")
-            }
-        }
+    Button(onClick = { showDialog.value = true }) {
+        Text("Pincha Aquí")
     }
 
     if (showDialog.value) {
@@ -92,8 +50,7 @@ fun FullScreen() {
             text = { Text("Este es un diálogo en Jetpack Compose") },
             confirmButton = {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = modifier,
                     contentAlignment = Alignment.BottomCenter
                 ) {
                     Button(onClick = { showDialog.value = false }) {
@@ -105,7 +62,68 @@ fun FullScreen() {
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+fun Logo(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.image),
+        contentDescription = "Imagen de ejemplo",
+        modifier = modifier,
+        contentScale = ContentScale.Crop
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BarraSuperior(modifier: Modifier = Modifier) {
+    TopAppBar(
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Home, // Ícono de Material Design
+                    contentDescription = "Icono Home (casa)",
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text("Mi App Kotlin")
+            }
+        }
+    )
+}
+
+@Composable
+fun FullScreen() {
+    // Detecta si el dispositivo está "vertical" u "horizontal"
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    Scaffold(
+        topBar = {
+            BarraSuperior()
+        }
+    ) { innerPadding ->
+        if (isLandscape) { // horizontal
+            Row(
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                // horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Logo(Modifier.height(50.dp).fillMaxWidth())
+                BotonDialog()
+            }
+        } else { // vertical
+            Column(
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Logo(Modifier.fillMaxWidth())
+                BotonDialog(Modifier.fillMaxWidth())
+            }
+        }
+    }
+}
+
+// descomenta las propiedades de alto y ancho para ver el preview en landscape (horizontal)
+@Preview(showBackground = true, widthDp = 700, heightDp = 400)
 @Composable
 fun RockScreenPreview() {
     FullScreen()
