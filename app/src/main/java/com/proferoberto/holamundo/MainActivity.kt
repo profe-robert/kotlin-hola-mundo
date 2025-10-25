@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun BotonDialog(modifier: Modifier = Modifier) {
+    // Componente botón con un dialog
     val showDialog = remember { mutableStateOf(false) }
 
     Button(onClick = { showDialog.value = true }) {
@@ -64,6 +65,7 @@ fun BotonDialog(modifier: Modifier = Modifier) {
 
 @Composable
 fun Logo(modifier: Modifier = Modifier) {
+    // compnente Logo
     Image(
         painter = painterResource(id = R.drawable.image),
         contentDescription = "Imagen de ejemplo",
@@ -75,6 +77,7 @@ fun Logo(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BarraSuperior(modifier: Modifier = Modifier) {
+    // componente barra superior
     TopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -93,6 +96,8 @@ fun BarraSuperior(modifier: Modifier = Modifier) {
 fun FullScreen() {
     // Detecta si el dispositivo está "vertical" u "horizontal"
     val configuration = LocalConfiguration.current
+
+    // es verdadera si la orientación es LANDSCAPE (HORIZONTAL)
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     Scaffold(
@@ -106,14 +111,14 @@ fun FullScreen() {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Logo(Modifier.height(150.dp))
+                Logo(Modifier.height(200.dp))
                 BotonDialog()
             }
         } else { // vertical
             Column(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
+                verticalArrangement = Arrangement.SpaceBetween, // los elementos verticalmente esten lo mas separados posibles
+                horizontalAlignment = Alignment.CenterHorizontally // horizontalmente va a centrar los elementos
             ) {
                 Logo(Modifier.fillMaxWidth())
                 BotonDialog(Modifier.fillMaxWidth())
