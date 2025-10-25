@@ -25,8 +25,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.proferoberto.holamundo.ui.theme.HolaMundoTheme
 import com.proferoberto.holamundo.R
+import com.proferoberto.holamundo.ui.screens.DetailScreen
+import com.proferoberto.holamundo.ui.screens.HomeScreen
+import com.proferoberto.holamundo.ui.screens.ProfileScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,142 +61,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun HomeScreen(navController: NavController) {
-
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-    Scaffold(
-        topBar = {
-            BarraSuperior("Marketplace")
-        }
-    ) { innerPadding ->
-
-        if (isLandscape) {
-            Row(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Logo(Modifier.height(150.dp))
-                Button(onClick = { navController.navigate(NavRoutes.DETAIL) }) {
-                    Text("Ver Detalle")
-                }
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Logo(Modifier.height(180.dp))
-
-                Button(onClick = { navController.navigate(NavRoutes.DETAIL) }) {
-                    Text("Ver Detalle")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ProfileScreen(navController: NavController) {
-
-    Scaffold(
-        topBar = {
-            BarraSuperior("Perfil")
-        }
-    ) { padding ->
-
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Usuario: Juan Pérez")
-            Text("⭐⭐⭐⭐☆ 4.5/5")
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Button(onClick = { navController.popBackStack(NavRoutes.HOME, false) }) {
-                Text("Volver al Home")
-            }
-        }
-    }
-}
-
-
-@Composable
-fun DetailScreen(navController: NavController) {
-
-    Scaffold(
-        topBar = {
-            BarraSuperior("Detalle de Producto")
-        }
-    ) { padding ->
-
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Guitarra Eléctrica Fender Stratocaster")
-            Logo(Modifier.height(200.dp))
-
-            Button(onClick = { navController.navigate(NavRoutes.PROFILE) }) {
-                Text("Ver Perfil del Comprador")
-            }
-        }
-    }
-}
-
-@Composable
-fun Logo(modifier: Modifier = Modifier) {
-    // compnente Logo
-    Image(
-        painter = painterResource(id = R.drawable.image),
-        contentDescription = "Imagen de ejemplo",
-        modifier = modifier,
-        contentScale = ContentScale.Crop
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BarraSuperior(text: String, modifier: Modifier = Modifier) {
-    // componente barra superior
-    TopAppBar(
-        title = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Home, // Ícono de Material Design
-                    contentDescription = "Icono Home (casa)",
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Text(text)
-            }
-        }
-    )
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun ScreenPreview() {
     val navController = rememberNavController()
 
-    // HomeScreen(navController)
+    HomeScreen(navController)
     // DetailScreen(navController)
-    ProfileScreen(navController)
+    // ProfileScreen(navController)
 }
