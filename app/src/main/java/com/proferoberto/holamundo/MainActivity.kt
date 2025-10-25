@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +19,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.proferoberto.holamundo.ui.theme.HolaMundoTheme
 import com.proferoberto.holamundo.R
 
@@ -29,37 +34,128 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HolaMundoTheme {
-                FullScreen()
+
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = NavRoutes.HOME
+                ) {
+
+                    composable(NavRoutes.HOME) {
+                        HomeScreen(navController)
+                    }
+
+                    composable(NavRoutes.DETAIL) {
+                        DetailScreen(navController)
+                    }
+
+                    composable(NavRoutes.PROFILE) {
+                        ProfileScreen(navController)
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun BotonDialog(modifier: Modifier = Modifier) {
-    // Componente botón con un dialog
-    val showDialog = remember { mutableStateOf(false) }
+fun HomeScreen(navController: NavController) {
 
-    Button(onClick = { showDialog.value = true }) {
-        Text("Pincha Aquí")
-    }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    if (showDialog.value) {
-        AlertDialog(
-            onDismissRequest = { showDialog.value = false },
-            title = { Text("¡Hola!") },
-            text = { Text("Este es un diálogo en Jetpack Compose") },
-            confirmButton = {
-                Box(
-                    modifier = modifier,
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    Button(onClick = { showDialog.value = false }) {
-                        Text("Cerrar")
-                    }
+    Scaffold(
+        topBar = {
+            BarraSuperior("Marketplace")
+        }
+    ) { innerPadding ->
+
+        if (isLandscape) {
+            Row(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Logo(Modifier.height(150.dp))
+                Button(onClick = { navController.navigate(NavRoutes.DETAIL) }) {
+                    Text("Ver Detalle")
                 }
             }
-        )
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Logo(Modifier.height(180.dp))
+
+                Button(onClick = { navController.navigate(NavRoutes.DETAIL) }) {
+                    Text("Ver Detalle")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ProfileScreen(navController: NavController) {
+
+    Scaffold(
+        topBar = {
+            BarraSuperior("Perfil")
+        }
+    ) { padding ->
+
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Usuario: Juan Pérez")
+            Text("⭐⭐⭐⭐☆ 4.5/5")
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(onClick = { navController.popBackStack(NavRoutes.HOME, false) }) {
+                Text("Volver al Home")
+            }
+        }
+    }
+}
+
+
+@Composable
+fun DetailScreen(navController: NavController) {
+
+    Scaffold(
+        topBar = {
+            BarraSuperior("Detalle de Producto")
+        }
+    ) { padding ->
+
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Guitarra Eléctrica Fender Stratocaster")
+            Logo(Modifier.height(200.dp))
+
+            Button(onClick = { navController.navigate(NavRoutes.PROFILE) }) {
+                Text("Ver Perfil del Comprador")
+            }
+        }
     }
 }
 
@@ -76,7 +172,7 @@ fun Logo(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BarraSuperior(modifier: Modifier = Modifier) {
+fun BarraSuperior(text: String, modifier: Modifier = Modifier) {
     // componente barra superior
     TopAppBar(
         title = {
@@ -86,50 +182,19 @@ fun BarraSuperior(modifier: Modifier = Modifier) {
                     contentDescription = "Icono Home (casa)",
                     modifier = Modifier.padding(end = 8.dp)
                 )
-                Text("Mi App Kotlin")
+                Text(text)
             }
         }
     )
 }
 
+
+@Preview(showBackground = true)
 @Composable
-fun FullScreen() {
-    // Detecta si el dispositivo está "vertical" u "horizontal"
-    val configuration = LocalConfiguration.current
+fun ScreenPreview() {
+    val navController = rememberNavController()
 
-    // es verdadera si la orientación es LANDSCAPE (HORIZONTAL)
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-    Scaffold(
-        topBar = {
-            BarraSuperior()
-        }
-    ) { innerPadding ->
-        if (isLandscape) { // horizontal
-            Row(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Logo(Modifier.height(200.dp))
-                BotonDialog()
-            }
-        } else { // vertical
-            Column(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                verticalArrangement = Arrangement.SpaceBetween, // los elementos verticalmente esten lo mas separados posibles
-                horizontalAlignment = Alignment.CenterHorizontally // horizontalmente va a centrar los elementos
-            ) {
-                Logo(Modifier.fillMaxWidth())
-                BotonDialog(Modifier.fillMaxWidth())
-            }
-        }
-    }
-}
-
-// descomenta las propiedades de alto y ancho para ver el preview en landscape (horizontal)
-@Preview(showBackground = true/*, widthDp = 700, heightDp = 400*/)
-@Composable
-fun RockScreenPreview() {
-    FullScreen()
+    // HomeScreen(navController)
+    // DetailScreen(navController)
+    ProfileScreen(navController)
 }
